@@ -12,12 +12,9 @@ Example of a bot-user conversation using ConversationHandler.
 Send /start to initiate the conversation.
 Press Ctrl-C on the command line or send a signal to the process to stop the
 bot.
-Code was copyed from https://github.com/python-telegram-bot/python-telegram-bot/blob/master/examples/conversationbot2.py
 """
 
 import logging
-from os import path
-import pandas as pd
 from typing import Dict
 
 from telegram import ReplyKeyboardMarkup, Update, ReplyKeyboardRemove
@@ -40,8 +37,9 @@ logger = logging.getLogger(__name__)
 CHOOSING, TYPING_REPLY, TYPING_CHOICE = range(3)
 
 reply_keyboard = [
-    ['Get IP list', 'Get new IP'],
-    ['Remove IP']
+    ['Age', 'Favourite colour'],
+    ['Number of siblings', 'Something else...'],
+    ['Done'],
 ]
 markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
 
@@ -71,20 +69,15 @@ def regular_choice(update: Update, context: CallbackContext) -> int:
 
     return TYPING_REPLY
 
-def remove_ip(update: Update, context: CallbackContext)->int:
-    '''
-    Removes ip from reserved list.
-    '''
-    print(f'called remove_ip, {Filters.command}')
-    if context.user_data['choice'] == 'Remove IP':
-        ip = update.message.text
-        df=pd.read_csv(path)
-        if ip in df['IP']:
-            df.drop(df[df["IP"]==ip].index, inplace=True)
-            df.to_csv(path, index=False)
-            update.message.reply_text(f'Removed {ip} from list')
-        else:
-            update.message.reply_text(f'No {ip} in list')
+
+def custom_choice(update: Update, context: CallbackContext) -> int:
+    """Ask the user for a description of a custom category."""
+    update.message.reply_text(
+        'Alright, please send me the category first, for example "Most impressive skill"'
+    )
+
+    return TYPING_CHOICE
+
 
 def received_information(update: Update, context: CallbackContext) -> int:
     """Store info provided by user and ask for the next category."""
@@ -92,10 +85,9 @@ def received_information(update: Update, context: CallbackContext) -> int:
     text = update.message.text
     category = user_data['choice']
     user_data[category] = text
-    #del user_data['choice']
+    del user_data['choice']
 
     update.message.reply_text(
-        f"{Filters.command}"
         "Neat! Just so you know, this is what you already told me:"
         f"{facts_to_str(user_data)} You can tell me more, or change your opinion"
         " on something.",
@@ -121,9 +113,6 @@ def done(update: Update, context: CallbackContext) -> int:
 
 
 def main() -> None:
-
-    #generate_list(reserved_list_path, subnet)
-    #generate_ip(path,subnet)
     """Run the bot."""
     # Create the Updater and pass it your bot's token.
     updater = Updater("5102543900:AAH1DBhEobhE5E2L07B3b4mfKkZRJtqO004")
@@ -137,24 +126,19 @@ def main() -> None:
         states={
             CHOOSING: [
                 MessageHandler(
-                    Filters.regex('^(Get IP list)$'), regular_choice
+                    Filters.regex('^(Age|Favourite colour|Number of siblings)$'), regular_choice
                 ),
-                MessageHandler(
-                    Filters.regex('^(Get new IP)$'), regular_choice
-                ),
-                MessageHandler(
-                    Filters.regex('^(Remove IP)$'), regular_choice
-                ),
+                MessageHandler(Filters.regex('^Something else...$'), custom_choice),
             ],
-            #TYPING_CHOICE: [
-            #    MessageHandler(
-            #        Filters.text & ~(Filters.command | Filters.regex('^Done$')), regular_choice
-            #    )
-            #],
+            TYPING_CHOICE: [
+                MessageHandler(
+                    Filters.text & ~(Filters.command | Filters.regex('^Done$')), regular_choice
+                )
+            ],
             TYPING_REPLY: [
                 MessageHandler(
                     Filters.text & ~(Filters.command | Filters.regex('^Done$')),
-                    remove_ip,
+                    received_information,
                 )
             ],
         },
@@ -173,7 +157,4 @@ def main() -> None:
 
 
 if __name__ == '__main__':
-    chat_ids = set()
-    subnet = '192.168.4.0/24'
-    path = '/home/andrew/Documents/generate_ip/reserved_list.csv'
     main()
