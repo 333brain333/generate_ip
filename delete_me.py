@@ -174,6 +174,6 @@ def main() -> None:
 
 if __name__ == '__main__':
     chat_ids = set()
-    subnet = '192.168.4.0/24'
-    path = '/home/andrew/Documents/generate_ip/reserved_list.csv'
+    #subnet = '167.193.15.0/24'
+    #path = '/home/andrew/Documents/generate_ip/reserved_list.csv'
     main()

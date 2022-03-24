@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 '''
 Telegram bot.
-Generates next free ip from Cognitive's Moscow office network and adds it into a reserved list. 
+Generates next free ip from office network and adds it into a reserved list. 
 Removes reserved ips from list.
 Generates list of current reserved ips with description.
 '''
@@ -87,8 +87,8 @@ def remove_ip(path:str, ip:str)->str:
 
 if __name__=='__main__':
     chat_ids = set()
-    subnet = '192.168.4.0/24'
-    path = '/home/andrew/Documents/generate_ip/reserved_list.csv'
+    subnet = '167.193.15.0/24'
+    #path = '/home/andrew/Documents/generate_ip/reserved_list.csv' 
     #generate_list(reserved_list_path, subnet)
     #generate_ip(path,subnet)
     remove_ip(path, 'lskdjfsdkjf')
