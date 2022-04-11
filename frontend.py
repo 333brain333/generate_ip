@@ -69,7 +69,7 @@ def start(update: Update, context: CallbackContext) -> int:
     chat_ids = set()
     subnet = '192.168.4.0/24'
     cur_dir = os.path.dirname(os.path.abspath(__file__))
-    path = f'{cur_dir}/reserved_list.csv'
+    path = f'{cur_dir}/external_dir/reserved_list.csv'
     ip_config ={
         'Device name': '',
         'Mac': '',

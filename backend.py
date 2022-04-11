@@ -106,7 +106,7 @@ if __name__=='__main__':
     chat_ids = set()
     subnet = '192.168.4.0/24'
     cur_dir = os.path.dirname(os.path.abspath(__file__))
-    path = f'{cur_dir}/reserved_list.csv' 
+    path = f'{cur_dir}/external_dir/reserved_list.csv' 
     generate_list(path, subnet)
     generate_ip(path,subnet, ip_config)
     #remove_ip(path, 'lskdjfsdkjf')

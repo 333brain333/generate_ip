@@ -1,0 +1,11 @@
+version: "3.7"
+services:
+  generate-ip:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    tty: true
+    volumes:
+      - .:/external_dir/
+
+    restart: unless-stopped
